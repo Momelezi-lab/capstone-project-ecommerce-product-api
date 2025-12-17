@@ -1,12 +1,13 @@
 """
-Week 1: Django Settings for E-commerce Product API
----------------------------------------------------
+Week 1-3: Django Settings for E-commerce Product API
+-----------------------------------------------------
 This file contains all the configuration for our Django project.
 
 Key configurations:
 - Database: SQLite for development (Week 1), can be changed for production
 - REST Framework: Authentication, permissions, filtering, and pagination
 - Installed Apps: Django REST Framework and django-filter for API functionality
+- Token Authentication: Added in Week 3 for secure API access
 """
 
 import os
@@ -40,11 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     # Third-party apps for REST API functionality
-    'rest_framework',      # Django REST Framework for building APIs
-    'django_filters',      # Advanced filtering for API endpoints
+    'rest_framework',              # Django REST Framework for building APIs
+    'rest_framework.authtoken',    # Week 3: Token authentication support
+    'django_filters',              # Advanced filtering for API endpoints
     
     # Our custom apps
-    'products',            # Main app for products and users
+    'products',                    # Main app for products and users
 ]
 
 MIDDLEWARE = [
@@ -98,8 +100,11 @@ DATABASES = {
 
 REST_FRAMEWORK = {
     # Week 3: Authentication classes - how users prove their identity
+    # Token authentication is the primary method for API clients
+    # Session auth kept for the browsable API interface
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',  # For browsable API
+        'rest_framework.authentication.TokenAuthentication',    # Week 3: Token auth for API clients
+        'rest_framework.authentication.SessionAuthentication',  # For browsable API in browser
         'rest_framework.authentication.BasicAuthentication',    # For simple testing
     ],
     

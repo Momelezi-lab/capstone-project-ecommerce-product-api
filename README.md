@@ -9,7 +9,7 @@ This is my capstone project where I built a fully functional e-commerce API from
 ### What I Learned
 
 - Building RESTful APIs with Django REST Framework
-- Implementing authentication and authorization
+- Implementing token-based authentication and authorization
 - Database modeling with Django ORM
 - API filtering, searching, and pagination
 - Writing clean, well-documented code
@@ -19,13 +19,14 @@ This is my capstone project where I built a fully functional e-commerce API from
 
 ## Project Timeline
 
-| Week   | Focus Area                                                     | Status         
-| Week 1 - Set up Django project, configure database & models             | ✅ Complete    
-| Week 2 -Implement CRUD for products & users, add search endpoint        | ✅ Complete    
-| Week 3 - Add token authentication, test API with Postman                | 🔄 In Progress 
-| Week 4 - Deploy on Heroku/PythonAnywhere, final testing & documentation | ⏳ Pending     
+| Week   | Focus Area                                                     | Status      |
+| ------ | -------------------------------------------------------------- | ----------- |
+| Week 1 | Set up Django project, configure database & models             | ✅ Complete |
+| Week 2 | Implement CRUD for products & users, add search endpoint       | ✅ Complete |
+| Week 3 | Add token authentication, test API with Postman                | ✅ Complete |
+| Week 4 | Deploy on Heroku/PythonAnywhere, final testing & documentation | ⏳ Pending  |
 
-
+---
 
 ## Features
 
@@ -35,6 +36,7 @@ This is my capstone project where I built a fully functional e-commerce API from
 - **User Management**: User registration, retrieval, update, and deletion
 - **Search**: Search products by name or category
 - **Categories**: Organize products into categories
+- **Token Authentication**: Secure API access with token-based auth (Week 3)
 
 ### Technical Features
 
@@ -44,84 +46,86 @@ This is my capstone project where I built a fully functional e-commerce API from
 - Ordering by price, name, or creation date
 - Input validation and error handling
 
-
+---
 
 ## Tech Stack
 
 - **Backend**: Python 3, Django 5.x
 - **API Framework**: Django REST Framework
 - **Database**: SQLite (development) / PostgreSQL (production)
-- **Authentication**: Token Authentication
+- **Authentication**: Token Authentication (DRF authtoken)
 - **Filtering**: django-filter
 
-
+---
 
 ## Database Schema
 
 ### User Model (Django Built-in)
 
-| Field       | Type         | Description                
-
-| id          - Integer (PK) | Auto-generated primary key 
-| username    - CharField    | Unique username            
-| email       - EmailField   | User's email address       
-| password    - CharField    | Hashed password            
-| date_joined - DateTime     | Account creation timestamp 
+| Field       | Type         | Description                |
+| ----------- | ------------ | -------------------------- |
+| id          | Integer (PK) | Auto-generated primary key |
+| username    | CharField    | Unique username            |
+| email       | EmailField   | User's email address       |
+| password    | CharField    | Hashed password            |
+| date_joined | DateTime     | Account creation timestamp |
 
 ### Product Model
 
-| Field          | Type            | Description                     
-
-| id             | Integer (PK)    | Auto-generated primary key   
-| name           | CharField(200)  | Product name                 
-| description    | TextField       | Detailed description         
-| price          | DecimalField    | Price (up to 99,999,999.99)  
-| category       | ForeignKey      | Link to Category             
-| stock_quantity | PositiveInteger | Available inventory          
-| image_url      | URLField        | Optional product image URL   
-| created_by     | ForeignKey      | User who created the product 
-| created_at     | DateTime        | Auto-set creation timestamp  
+| Field          | Type            | Description                  |
+| -------------- | --------------- | ---------------------------- |
+| id             | Integer (PK)    | Auto-generated primary key   |
+| name           | CharField(200)  | Product name                 |
+| description    | TextField       | Detailed description         |
+| price          | DecimalField    | Price (up to 99,999,999.99)  |
+| category       | ForeignKey      | Link to Category             |
+| stock_quantity | PositiveInteger | Available inventory          |
+| image_url      | URLField        | Optional product image URL   |
+| created_by     | ForeignKey      | User who created the product |
+| created_at     | DateTime        | Auto-set creation timestamp  |
 
 ### Category Model
 
 | Field | Type           | Description                |
-
+| ----- | -------------- | -------------------------- |
 | id    | Integer (PK)   | Auto-generated primary key |
 | name  | CharField(100) | Category name (unique)     |
 | slug  | SlugField      | URL-friendly identifier    |
 
-
+---
 
 ## API Endpoints
 
 ### Products
 
 | Method | Endpoint                | Description          | Auth Required |
+| ------ | ----------------------- | -------------------- | ------------- |
+| GET    | `/api/products/`        | List all products    | No            |
+| POST   | `/api/products/`        | Create a new product | Yes           |
+| GET    | `/api/products/{id}/`   | Get product details  | No            |
+| PUT    | `/api/products/{id}/`   | Update a product     | Yes           |
+| PATCH  | `/api/products/{id}/`   | Partial update       | Yes           |
+| DELETE | `/api/products/{id}/`   | Delete a product     | Yes           |
+| GET    | `/api/products/search/` | Search products      | No            |
 
-| GET    | `/api/products/`        | List all products    | No            
-| POST   | `/api/products/`        | Create a new product | Yes           
-| GET    | `/api/products/{id}/`   | Get product details  | No            
-| PUT    | `/api/products/{id}/`   | Update a product     | Yes           
-| PATCH  | `/api/products/{id}/`   | Partial update       | Yes           
-| DELETE | `/api/products/{id}/`   | Delete a product     | Yes           
-| GET    | `/api/products/search/` | Search products      | No            
+### Users & Authentication (Week 3)
 
-### Users
-
-| Method | Endpoint               | Description       | Auth Required |
-
-| POST   | `/api/users/register/` | Register new user | No            
-| GET    | `/api/users/`          | List all users    | No            
-| GET    | `/api/users/{id}/`     | Get user details  | No            
-| PUT    | `/api/users/{id}/`     | Update user       | Yes           
-| DELETE | `/api/users/{id}/`     | Delete user       | Yes           
+| Method | Endpoint               | Description                       | Auth Required |
+| ------ | ---------------------- | --------------------------------- | ------------- |
+| POST   | `/api/users/register/` | Register new user (returns token) | No            |
+| POST   | `/api/users/login/`    | Login and get auth token          | No            |
+| POST   | `/api/users/logout/`   | Logout and invalidate token       | Yes           |
+| GET    | `/api/users/`          | List all users                    | No            |
+| GET    | `/api/users/{id}/`     | Get user details                  | No            |
+| PUT    | `/api/users/{id}/`     | Update user                       | Yes           |
+| DELETE | `/api/users/{id}/`     | Delete user                       | Yes           |
 
 ### Categories
 
 | Method | Endpoint                | Description          | Auth Required |
-
-| GET    | `/api/categories/`      | List all categories  | No            
-| GET    | `/api/categories/{id}/` | Get category details | No            
+| ------ | ----------------------- | -------------------- | ------------- |
+| GET    | `/api/categories/`      | List all categories  | No            |
+| GET    | `/api/categories/{id}/` | Get category details | No            |
 
 ---
 
@@ -178,9 +182,20 @@ This is my capstone project where I built a fully functional e-commerce API from
 
 ---
 
-## Usage Examples
+## Authentication (Week 3)
 
-### Register a New User
+This API uses **Token Authentication** as the primary authentication method. I implemented this in Week 3 to secure the API endpoints.
+
+### How Token Authentication Works
+
+1. User registers or logs in
+2. Server returns an authentication token
+3. Client includes token in all subsequent requests
+4. Server validates token and processes request
+
+### Getting a Token
+
+**Option 1: Register a new user**
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/users/register/ \
@@ -188,16 +203,74 @@ curl -X POST http://127.0.0.1:8000/api/users/register/ \
   -d '{"username": "newuser", "email": "user@example.com", "password": "securepass123"}'
 ```
 
-**Response:**
+Response:
 
 ```json
 {
-  "id": 1,
-  "username": "newuser",
-  "email": "user@example.com",
-  "date_joined": "2024-01-15T10:30:00Z"
+  "user": {
+    "id": 1,
+    "username": "newuser",
+    "email": "user@example.com",
+    "date_joined": "2024-01-15T10:30:00Z"
+  },
+  "token": "your-auth-token-here",
+  "message": "Registration successful! Use this token in the Authorization header."
 }
 ```
+
+**Option 2: Login with existing credentials**
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/users/login/ \
+  -H "Content-Type: application/json" \
+  -d '{"username": "existinguser", "password": "password123"}'
+```
+
+Response:
+
+```json
+{
+  "token": "your-auth-token-here",
+  "user_id": 1,
+  "username": "existinguser",
+  "email": "user@example.com",
+  "message": "Login successful!"
+}
+```
+
+### Using the Token
+
+Include the token in the `Authorization` header of your requests:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/products/ \
+  -H "Authorization: Token your-auth-token-here" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "New Product", "description": "Description", "price": 99.99, "category_id": 1, "stock_quantity": 10}'
+```
+
+### Logging Out
+
+To invalidate your token (logout):
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/users/logout/ \
+  -H "Authorization: Token your-auth-token-here"
+```
+
+Response:
+
+```json
+{
+  "message": "Logout successful. Your token has been deleted."
+}
+```
+
+After logout, you'll need to login again to get a new token.
+
+---
+
+## Usage Examples
 
 ### List All Products
 
@@ -205,11 +278,11 @@ curl -X POST http://127.0.0.1:8000/api/users/register/ \
 curl http://127.0.0.1:8000/api/products/
 ```
 
-### Create a Product (Authenticated)
+### Create a Product (with Token Auth)
 
 ```bash
 curl -X POST http://127.0.0.1:8000/api/products/ \
-  -u admin:yourpassword \
+  -H "Authorization: Token your-auth-token-here" \
   -H "Content-Type: application/json" \
   -d '{
     "name": "iPhone 15",
@@ -280,49 +353,48 @@ ecommerce-product-api/
 
 ---
 
-## Authentication
-
-This API uses **Session Authentication** and **Basic Authentication** for development.
-
-### Basic Authentication
-
-Include credentials in your request:
-
-```bash
-curl -u username:password http://127.0.0.1:8000/api/products/
-```
-
-### Using the Browsable API
-
-1. Go to http://127.0.0.1:8000/api/
-2. Click "Log in" in the top right corner
-3. Enter your credentials
-4. You can now make authenticated requests through the browser
-
----
-
 ## Testing with Postman
+
+I tested all API endpoints using Postman during Week 3. Here's how to set it up:
+
+### Setup
 
 1. Import the API endpoints into Postman
 2. Set up an environment with:
    - `base_url`: `http://127.0.0.1:8000`
-3. For authenticated requests, use Basic Auth with your credentials
-4. Test each endpoint systematically
+   - `token`: (your auth token after login)
 
-### Sample Postman Collection Endpoints:
+### Authentication in Postman
 
-- `{{base_url}}/api/products/` - GET, POST
-- `{{base_url}}/api/products/1/` - GET, PUT, DELETE
-- `{{base_url}}/api/products/search/?name=test` - GET
-- `{{base_url}}/api/users/register/` - POST
-- `{{base_url}}/api/users/` - GET
-- `{{base_url}}/api/categories/` - GET
+1. First, call the login endpoint to get your token
+2. Go to the **Authorization** tab
+3. Select **API Key** from the Type dropdown
+4. Set Key to `Authorization`
+5. Set Value to `Token your-token-here`
+6. Set "Add to" to `Header`
+
+### Sample Postman Collection Endpoints
+
+**Public Endpoints (no auth needed):**
+
+- `GET {{base_url}}/api/products/` - List products
+- `GET {{base_url}}/api/products/search/?name=test` - Search products
+- `GET {{base_url}}/api/categories/` - List categories
+- `POST {{base_url}}/api/users/register/` - Register user
+- `POST {{base_url}}/api/users/login/` - Login
+
+**Protected Endpoints (token required):**
+
+- `POST {{base_url}}/api/products/` - Create product
+- `PUT {{base_url}}/api/products/1/` - Update product
+- `DELETE {{base_url}}/api/products/1/` - Delete product
+- `POST {{base_url}}/api/users/logout/` - Logout
 
 ---
 
 ## Future Enhancements
 
-- [ ] Token-based authentication (Week 3)
+- [x] Token-based authentication (Week 3) ✅
 - [ ] Deployment to Heroku/PythonAnywhere (Week 4)
 - [ ] Product image upload functionality
 - [ ] Currency conversion API integration
@@ -340,6 +412,7 @@ Looking back at this project, here are some things I learned and would consider 
 2. **Use environment variables early** - Would set up python-decouple from day one for secrets management
 3. **Write tests alongside features** - Test-driven development would catch bugs earlier
 4. **Document as you go** - Comments and documentation are easier to write when the code is fresh
+5. **Token refresh mechanism** - In a production app, I'd implement token refresh for better security
 
 ---
 
@@ -347,7 +420,7 @@ Looking back at this project, here are some things I learned and would consider 
 
 Built as a capstone project to demonstrate proficiency in Django REST Framework and API development.
 
-
+---
 
 ## License
 

@@ -1,12 +1,13 @@
 """
-Week 2: Views for E-commerce Product API
------------------------------------------
+Week 2-3: Views for E-commerce Product API
+-------------------------------------------
 This module contains all the ViewSets and API views for:
 - Product CRUD operations (Create, Read, Update, Delete)
 - Category listing (Read-only)
 - User CRUD operations
-- User registration endpoint
+- User registration endpoint (with auto token generation - Week 3)
 - Product search functionality
+- Token authentication login/logout (Week 3)
 
 I used Django REST Framework's ViewSets to reduce boilerplate code
 and provide consistent API behavior across all endpoints.
@@ -14,9 +15,11 @@ and provide consistent API behavior across all endpoints.
 
 from rest_framework import viewsets, filters, status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
 from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product, Category
@@ -105,7 +108,7 @@ class UserViewSet(viewsets.ModelViewSet):
 @permission_classes([AllowAny])
 def register_user(request):
     """
-    Week 2: Public endpoint for user self-registration.
+    Week 2-3: Public endpoint for user self-registration.
     
     Endpoint: POST /api/users/register/
     
@@ -116,16 +119,107 @@ def register_user(request):
         "password": "securepassword123"
     }
     
-    Returns:
-    - 201 Created: User successfully registered
+    Returns (Week 3 update - now includes token):
+    - 201 Created: User successfully registered with auth token
     - 400 Bad Request: Validation errors (e.g., username taken)
+    
+    Week 3: I updated this to automatically create and return an auth token
+    so users can immediately start making authenticated requests after registration.
     """
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        # Return user data without password (password is write_only in serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        user = serializer.save()
+        
+        # Week 3: Create auth token for the new user
+        token, created = Token.objects.get_or_create(user=user)
+        
+        # Return user data with token
+        return Response({
+            'user': serializer.data,
+            'token': token.key,
+            'message': 'Registration successful! Use this token in the Authorization header.'
+        }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# =============================================================================
+# AUTHENTICATION ENDPOINTS (Week 3)
+# =============================================================================
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def user_login(request):
+    """
+    Week 3: Login endpoint that returns an authentication token.
+    
+    Endpoint: POST /api/users/login/
+    
+    Request body:
+    {
+        "username": "existinguser",
+        "password": "userpassword123"
+    }
+    
+    Returns:
+    - 200 OK: Login successful with auth token and user info
+    - 401 Unauthorized: Invalid credentials
+    
+    How to use the token:
+    Include it in the Authorization header of subsequent requests:
+    Authorization: Token <your-token-here>
+    """
+    username = request.data.get('username')
+    password = request.data.get('password')
+    
+    # Validate that both fields are provided
+    if not username or not password:
+        return Response({
+            'error': 'Please provide both username and password'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Authenticate the user
+    user = authenticate(username=username, password=password)
+    
+    if user:
+        # Get or create token for this user
+        token, created = Token.objects.get_or_create(user=user)
+        
+        return Response({
+            'token': token.key,
+            'user_id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'message': 'Login successful!'
+        }, status=status.HTTP_200_OK)
+    else:
+        return Response({
+            'error': 'Invalid credentials. Please check username and password.'
+        }, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def user_logout(request):
+    """
+    Week 3: Logout endpoint that deletes the user's auth token.
+    
+    Endpoint: POST /api/users/logout/
+    
+    Headers required:
+    Authorization: Token <your-token-here>
+    
+    Returns:
+    - 200 OK: Logout successful, token deleted
+    
+    Note: After logout, the user must login again to get a new token.
+    This is more secure than keeping tokens alive indefinitely.
+    """
+    # Delete the user's token
+    request.user.auth_token.delete()
+    
+    return Response({
+        'message': 'Logout successful. Your token has been deleted.'
+    }, status=status.HTTP_200_OK)
 
 
 # =============================================================================
