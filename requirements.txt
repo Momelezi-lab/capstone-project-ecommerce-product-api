@@ -1,0 +1,26 @@
+# Django E-commerce Product API - Required Packages
+# This file tells the deployment platform which Python packages to install
+
+# Core Django framework
+Django==5.2.8
+
+# Django REST Framework for building APIs
+djangorestframework==3.16.1
+
+# Advanced filtering for API endpoints
+django-filter==25.2
+
+# Python package for handling environment variables (for production secrets)
+python-decouple==3.8
+
+# Database adapter (for PostgreSQL in production)
+psycopg2-binary==2.9.9
+
+# Database URL parser (for Heroku DATABASE_URL)
+dj-database-url==2.1.0
+
+# Web server interface (needed for deployment)
+gunicorn==21.2.0
+
+# WhiteNoise for serving static files in production
+whitenoise==6.6.0

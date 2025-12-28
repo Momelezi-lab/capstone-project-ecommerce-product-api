@@ -19,12 +19,12 @@ This is my capstone project where I built a fully functional e-commerce API from
 
 ## Project Timeline
 
-| Week   | Focus Area                                                     | Status      |
-| ------ | -------------------------------------------------------------- | ----------- |
-| Week 1 | Set up Django project, configure database & models             | ✅ Complete |
-| Week 2 | Implement CRUD for products & users, add search endpoint       | ✅ Complete |
-| Week 3 | Add token authentication, test API with Postman                | ✅ Complete |
-| Week 4 | Deploy on Heroku/PythonAnywhere, final testing & documentation | ⏳ Pending  |
+| Week   | Focus Area                                                | Status      |
+| ------ | --------------------------------------------------------- | ----------- |
+| Week 1 | Set up Django project, configure database & models        | ✅ Complete |
+| Week 2 | Implement CRUD for products & users, add search endpoint  | ✅ Complete |
+| Week 3 | Add token authentication, test API with Postman           | ✅ Complete |
+| Week 4 | Deploy on Heroku, production configuration, final testing | ✅ Complete |
 
 ---
 
@@ -392,10 +392,30 @@ I tested all API endpoints using Postman during Week 3. Here's how to set it up:
 
 ---
 
+## Deployment (Week 4)
+
+This API is deployed on Heroku and accessible at: **[Your Heroku URL Here]**
+
+### Deployment Features:
+
+- ✅ Production-ready configuration with environment variables
+- ✅ PostgreSQL database (automatically provided by Heroku)
+- ✅ Static files served via WhiteNoise
+- ✅ Secure settings (DEBUG=False, environment-based secrets)
+- ✅ Gunicorn web server for production
+
+### Deployment Documentation:
+
+- See `DEPLOYMENT_GUIDE.md` for step-by-step deployment instructions
+- See `DEPLOYMENT_QUICK_REFERENCE.md` for quick command reference
+- See `VIDEO_EXPLANATION_NOTES.md` for beginner-friendly explanation notes
+
+---
+
 ## Future Enhancements
 
 - [x] Token-based authentication (Week 3) ✅
-- [ ] Deployment to Heroku/PythonAnywhere (Week 4)
+- [x] Deployment to Heroku (Week 4) ✅
 - [ ] Product image upload functionality
 - [ ] Currency conversion API integration
 - [ ] Order management system
@@ -409,10 +429,11 @@ I tested all API endpoints using Postman during Week 3. Here's how to set it up:
 Looking back at this project, here are some things I learned and would consider for future projects:
 
 1. **Start with a clear API design** - Planning all endpoints upfront helped avoid refactoring later
-2. **Use environment variables early** - Would set up python-decouple from day one for secrets management
+2. **Use environment variables early** - Set up python-decouple from day one for secrets management (implemented in Week 4)
 3. **Write tests alongside features** - Test-driven development would catch bugs earlier
 4. **Document as you go** - Comments and documentation are easier to write when the code is fresh
 5. **Token refresh mechanism** - In a production app, I'd implement token refresh for better security
+6. **Deployment is simpler than it seems** - Once you understand the process, deploying becomes straightforward
 
 ---
 
