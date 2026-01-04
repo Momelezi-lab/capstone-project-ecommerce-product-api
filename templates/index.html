@@ -145,23 +145,6 @@
             color: white;
         }
 
-        .token-display {
-            background: #f8f9fa;
-            border: 2px solid #667eea;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            word-break: break-all;
-            font-family: monospace;
-            font-size: 14px;
-        }
-
-        .token-label {
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 8px;
-            display: block;
-        }
 
         .products-section {
             background: white;
@@ -407,11 +390,10 @@
             </div>
 
             <div id="token-display" style="display: none;">
-                <div class="token-display">
-                    <span class="token-label">Your Auth Token:</span>
-                    <div id="token-value"></div>
+                <div style="text-align: center; padding: 20px;">
+                    <p style="margin-bottom: 15px; color: #333; font-weight: 500;">You are logged in successfully!</p>
+                    <button onclick="logout()" class="btn btn-danger">Logout</button>
                 </div>
-                <button onclick="logout()" class="btn btn-danger" style="margin-top: 15px;">Logout</button>
             </div>
         </div>
 
@@ -596,7 +578,6 @@
         }
 
         function showTokenDisplay(token) {
-            document.getElementById('token-value').textContent = token;
             document.getElementById('token-display').style.display = 'block';
             document.getElementById('login-tab').style.display = 'none';
             document.getElementById('register-tab').style.display = 'none';
