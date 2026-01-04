@@ -512,6 +512,12 @@
             const username = document.getElementById('login-username').value;
             const password = document.getElementById('login-password').value;
 
+            // Show loading state
+            const loginBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = loginBtn.textContent;
+            loginBtn.textContent = 'Logging in...';
+            loginBtn.disabled = true;
+
             try {
                 const response = await fetch(`${API_BASE}/api/users/login/`, {
                     method: 'POST',
@@ -521,7 +527,17 @@
                     body: JSON.stringify({ username, password })
                 });
 
-                const data = await response.json();
+                let data;
+                try {
+                    data = await response.json();
+                } catch (jsonError) {
+                    const text = await response.text();
+                    showAlert('Server error: ' + text, 'error');
+                    console.error('Response text:', text);
+                    loginBtn.textContent = originalText;
+                    loginBtn.disabled = false;
+                    return;
+                }
 
                 if (response.ok) {
                     authToken = data.token;
@@ -531,10 +547,18 @@
                     showAlert('Login successful!', 'success');
                     document.getElementById('login-form').reset();
                 } else {
-                    showAlert(data.error || 'Login failed', 'error');
+                    // Show more detailed error message
+                    const errorMsg = data.error || data.detail || (typeof data === 'string' ? data : JSON.stringify(data)) || 'Login failed';
+                    showAlert(errorMsg, 'error');
+                    console.error('Login error:', data);
+                    console.error('Response status:', response.status);
                 }
             } catch (error) {
-                showAlert('Network error. Please try again.', 'error');
+                showAlert('Network error: ' + error.message, 'error');
+                console.error('Login network error:', error);
+            } finally {
+                loginBtn.textContent = originalText;
+                loginBtn.disabled = false;
             }
         }
 
@@ -644,7 +668,7 @@
                 <div class="product-card">
                     <div class="product-name">${escapeHtml(product.name)}</div>
                     <div class="product-description">${escapeHtml(product.description)}</div>
-                    <div class="product-price">$${parseFloat(product.price).toFixed(2)}</div>
+                    <div class="product-price">R${parseFloat(product.price).toFixed(2)}</div>
                     <div class="product-meta">
                         <span>Category: ${product.category_name || 'N/A'}</span>
                         <span>Stock: ${product.stock_quantity}</span>

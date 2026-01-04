@@ -18,9 +18,8 @@ from decouple import config, Csv
 # Build paths inside the project - BASE_DIR points to the project root
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# =============================================================================
 # SECURITY SETTINGS (Week 4: Using Environment Variables)
-# =============================================================================
+
 
 # SECURITY WARNING: keep the secret key secret in production!
 # Week 4: Now using environment variables for security
@@ -41,9 +40,7 @@ if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
     ALLOWED_HOSTS = ['*', '.vercel.app', '.now.sh']
 
 
-# =============================================================================
 # APPLICATION DEFINITION
-# =============================================================================
 
 INSTALLED_APPS = [
     # Django core apps
@@ -68,6 +65,7 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',  # Week 4: Serve static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'ecommerce_api.middleware.DisableCSRFForAPI',  # Custom: Disable CSRF for API endpoints
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -95,9 +93,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ecommerce_api.wsgi.application'
 
 
-# =============================================================================
 # DATABASE CONFIGURATION
-# =============================================================================
 
 # Week 1: Using SQLite for development - simple file-based database
 # Week 4: Automatically switches to PostgreSQL in production (Heroku provides DATABASE_URL)
@@ -125,17 +121,14 @@ else:
     }
 
 
-# =============================================================================
 # DJANGO REST FRAMEWORK CONFIGURATION
-# =============================================================================
 
 REST_FRAMEWORK = {
     # Week 3: Authentication classes - how users prove their identity
     # Token authentication is the primary method for API clients
-    # Session auth kept for the browsable API interface
+    # Session auth removed to avoid CSRF issues with API endpoints
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',    # Week 3: Token auth for API clients
-        'rest_framework.authentication.SessionAuthentication',  # For browsable API in browser
         'rest_framework.authentication.BasicAuthentication',    # For simple testing
     ],
     
@@ -156,9 +149,7 @@ REST_FRAMEWORK = {
 }
 
 
-# =============================================================================
 # INTERNATIONALIZATION
-# =============================================================================
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -166,9 +157,7 @@ USE_I18N = True
 USE_TZ = True
 
 
-# =============================================================================
 # STATIC FILES (Week 4: Production Configuration)
-# =============================================================================
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'  # Week 4: Where collectstatic puts all static files

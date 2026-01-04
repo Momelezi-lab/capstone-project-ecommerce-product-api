@@ -28,9 +28,8 @@ from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer, UserSerializer
 
 
-# =============================================================================
 # FRONTEND VIEW
-# =============================================================================
+
 
 def index_view(request):
     """
@@ -39,9 +38,9 @@ def index_view(request):
     return render(request, 'index.html')
 
 
-# =============================================================================
+
 # PRODUCT VIEWS
-# =============================================================================
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -77,9 +76,8 @@ class ProductViewSet(viewsets.ModelViewSet):
         """
         serializer.save(created_by=self.request.user)
 
-# =============================================================================
 # CATEGORY VIEWS
-# =============================================================================
+
 
 class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     """
@@ -96,9 +94,9 @@ class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = CategorySerializer
 
 
-# =============================================================================
+
 # USER VIEWS
-# =============================================================================
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """
@@ -155,9 +153,7 @@ def register_user(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# =============================================================================
 # AUTHENTICATION ENDPOINTS (Week 3)
-# =============================================================================
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -235,9 +231,9 @@ def user_logout(request):
     }, status=status.HTTP_200_OK)
 
 
-# =============================================================================
+
 # SEARCH ENDPOINT
-# =============================================================================
+
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
