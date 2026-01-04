@@ -8,6 +8,7 @@ This module contains all the ViewSets and API views for:
 - User registration endpoint (with auto token generation - Week 3)
 - Product search functionality
 - Token authentication login/logout (Week 3)
+- Frontend UI view
 
 I used Django REST Framework's ViewSets to reduce boilerplate code
 and provide consistent API behavior across all endpoints.
@@ -21,9 +22,21 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.db.models import Q
+from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from .models import Product, Category
 from .serializers import ProductSerializer, CategorySerializer, UserSerializer
+
+
+# =============================================================================
+# FRONTEND VIEW
+# =============================================================================
+
+def index_view(request):
+    """
+    Serve the frontend UI at the root URL.
+    """
+    return render(request, 'index.html')
 
 
 # =============================================================================

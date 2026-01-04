@@ -35,7 +35,10 @@ DEBUG = config('DEBUG', default=True, cast=bool)
 # Week 4: ALLOWED_HOSTS - list of domains that can access your API
 # In production, replace with your actual domain (e.g., 'your-app.herokuapp.com')
 # For development, we allow all hosts
+# Vercel: Include vercel.app and vercel domains
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
+if not ALLOWED_HOSTS or '*' in ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ['*', '.vercel.app', '.now.sh']
 
 
 # =============================================================================
@@ -76,7 +79,7 @@ ROOT_URLCONF = 'ecommerce_api.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

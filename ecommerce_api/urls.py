@@ -13,8 +13,12 @@ URL Structure:
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework.authtoken.views import obtain_auth_token
+from products.views import index_view
 
 urlpatterns = [
+    # Frontend UI - serve at root
+    path('', index_view, name='index'),
+    
     # Django admin panel
     path('admin/', admin.site.urls),
     

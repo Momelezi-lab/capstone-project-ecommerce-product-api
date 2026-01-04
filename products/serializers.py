@@ -123,6 +123,9 @@ class ProductSerializer(serializers.ModelSerializer):
     
     # Display username instead of user ID, set automatically in view
     created_by = serializers.StringRelatedField(read_only=True)
+    
+    # Add category_name for easier frontend display
+    category_name = serializers.CharField(source='category.name', read_only=True)
 
     class Meta:
         model = Product
